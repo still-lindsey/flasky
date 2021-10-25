@@ -8,19 +8,17 @@ dog_bp = Blueprint("dog", __name__,url_prefix="/dogs")
 def handle_dogs():
     if request.method == 'POST':
         request_body = request.get_json()
-        if "name" not in request_body or "breed" not in request_body:
+        if "name" not in request_body:
             return {"error": "incomplete request body"}, 400
 
-
-        new_dog = Dog(
-            name=request_body["name"],
-            breed=request_body["breed"],
-        )
+        new_dog = Dog(name=request_body["name"])
+        if "breed" in request_body:
+            new_dog.breed = request_body["breed"]
 
         db.session.add(new_dog)
         db.session.commit()
 
-        return make_response(f"Dog {new_dog.name} created!", 201)
+        return make_response(f"Dog {new_dog.name} created! Breed: {new_dog.breed}", 201)
     elif request.method == 'GET':
         dogs = Dog.query.all()
         dogs_response = []
