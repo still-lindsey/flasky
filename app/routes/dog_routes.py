@@ -8,7 +8,6 @@ dog_bp = Blueprint("dog", __name__,url_prefix="/dogs")
 def handle_dogs():
     if request.method == 'POST':
         request_body = request.get_json()
-        
         if "name" not in request_body or "breed" not in request_body:
             return {"error": "incomplete request body"}, 400
 
@@ -35,9 +34,11 @@ def handle_dogs():
 @dog_bp.route("/<dog_id>", methods=["GET"])
 def handle_dog(dog_id):
     try:
-        dog = Dog.query.get(dog_id)
-        return dog.to_dict()
+        dog_id = int(dog_id)
     except:
-        return {"error": "Bad Request"}, 400
+        return {"error": "dog_id must be an int"}, 400
+
+    dog = Dog.query.get(dog_id)
+    return dog.to_dict()
 
     
