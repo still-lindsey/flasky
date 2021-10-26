@@ -1,10 +1,10 @@
 from app import db
 from app.models.dog import Dog
-from flask import Blueprint, jsonify, make_response, request
+from flask import Blueprint, jsonify, make_response, request, abort
 
 dog_bp = Blueprint("dog", __name__,url_prefix="/dogs")
 
-@dog_bp.route("", methods=["GET","POST"])
+@dog_bp.route("", methods=["GET", "POST"])
 def handle_dogs():
     if request.method == 'POST':
         request_body = request.get_json()
@@ -30,15 +30,40 @@ def handle_dogs():
             )
         return jsonify(dogs_response)
 
-
-@dog_bp.route("/<dog_id>", methods=["GET"])
-def handle_dog(dog_id):
+def get_dog_from_id(dog_id):
     try:
         dog_id = int(dog_id)
     except:
-        return {"error": "dog_id must be an int"}, 400
+        abort(make_response({"error": "dog_id must be an int"}, 400))
 
-    dog = Dog.query.get(dog_id)
+    return Dog.query.get_or_404(dog_id, description="{dog not found}")
+
+@dog_bp.route("/<dog_id>", methods=["GET"])
+def read_dog(dog_id):
+    dog = get_dog_from_id(dog_id)
+
     return dog.to_dict()
 
+@dog_bp.route("/<dog_id>", methods=["PATCH"])
+def update_dog(dog_id):
+    dog = get_dog_from_id(dog_id)
+    request_body = request.get_json()
+
+    if "name" in request_body:
+        dog.name = request_body["name"]
+    if "breed" in request_body:
+        dog.breed = request_body["breed"]
+    
+    db.session.commit()
+    return jsonify(dog.to_dict())
+
+@dog_bp.route("/<dog_id>", methods=["DELETE"])
+def delete_dog(dog_id):
+    dog = get_dog_from_id(dog_id)
+
+    db.session.delete(dog)
+    db.session.commit()
+    return jsonify(dog.to_dict())
+
+    
     
