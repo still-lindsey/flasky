@@ -23,19 +23,18 @@ def read_all_dogs():
     older_query = request.args.get("older")
     sort_query = request.args.get("sort")
 
-    dogs = Dog.query
-
     if age_query:
         check_valid_int(age_query, "age")
-        dogs = dogs.filter_by(age=age_query)
+        dogs = Dog.query.filter_by(age=age_query)
     elif older_query:
         check_valid_int(older_query, "older")
-        dogs = dogs.filter(Dog.age > older_query)
-
-    if sort_query == "asc":
-        dogs = dogs.order_by(Dog.age.asc())
+        dogs = Dog.query.filter(Dog.age > older_query)
+    elif sort_query == "asc":
+        dogs = Dog.query.order_by(Dog.age.asc())
     elif sort_query == "desc":
-        dogs = dogs.order_by(Dog.age.desc())
+        dogs = Dog.query.order_by(Dog.age.desc())
+    else:
+        dogs = Dog.query.all()
 
     dogs_response = []
     for dog in dogs:
