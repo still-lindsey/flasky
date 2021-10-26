@@ -7,4 +7,12 @@ class Dog(db.Model):
     age = db.Column(db.Integer)
     name = db.Column(db.String(64))
 
+    def to_dict(self):
+        return({
+            "id": self.id,
+            "name": self.name,
+            "age": self.age,
+            "breed": self.breed,
+        })
+
 
