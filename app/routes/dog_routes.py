@@ -11,6 +11,7 @@ def create_dog():
     # Get the data from the request
     request_data = request.get_json()
 
+    # sanitize_data(request_data)
     if "name" not in request_data or "age" not in request_data \
         or "breed" not in request_data:
         return jsonify({"message": "Missing data"}), 400
@@ -23,14 +24,21 @@ def create_dog():
 
     return f"Dog {new_dog.name} created", 201
 
-
-
-
 # get all dogs
 @dog_bp.route("", methods=["GET"])
 def handle_dogs():
     dogs_response = []
-    dogs = Dog.query.all()
+
+    if request.args.get("breed"):
+        dogs = Dog.query.filter_by(breed=request.args.get("breed"))
+    elif request.args.get("younger"):
+        # Do input validation
+
+        dogs = Dog.query.filter(Dog.age < request.args.get("younger"))
+    elif request.args.get("order_by") == "age":
+        dogs = Dog.query.order_by(Dog.age)
+    else:
+        dogs = Dog.query.order_by(Dog.age.desc())
     for dog in dogs:
         dogs_response.append(dog.to_dict())
     
@@ -39,9 +47,12 @@ def handle_dogs():
 
 @dog_bp.route("/<dog_id>", methods=["GET", "PUT"])
 def handle_dog(dog_id):
-    print(dog_id)
+    if not dog_id.isnumeric():
+        return { "Error": f"{dog_id} must be numeric."}, 404
+
     dog_id = int(dog_id)
     dog = Dog.query.get(dog_id)
+
     if not dog:
         return { "Error": f"Dog {dog_id} was not found"}, 404
 
@@ -61,10 +72,10 @@ def sanitize_data(input_data):
     for name, val_type in data_types.items():
         try:
             val = input_data[name]
-            type_test = val_type(val)
+            val_type(val)
         except Exception as e:
             print(e)
-            raise abort(400, "Bad Data")
+            abort(400, "Bad Data")
     return input_data
 
 def do_nothing():
