@@ -1,6 +1,7 @@
 from app import db
 from app.models.dog import Dog
 from flask import Blueprint, jsonify, make_response, request, abort
+import random
 
 dog_bp = Blueprint("dog", __name__,url_prefix="/dogs")
 
@@ -42,6 +43,16 @@ def read_all_dogs():
             dog.to_dict()
         )
     return jsonify(dogs_response)
+
+@dog_bp.route("/<dog_id>/add_chip", methods=["PATCH"])
+def add_chip_to_dog(dog_id):    
+    dog = get_dog_from_id(dog_id)
+    chip = str(random.randint(1000,9999))
+    dog.chip = chip
+
+    db.session.commit()
+
+    return dog.to_dict()
 
 @dog_bp.route("", methods=["POST"])
 def create_dogs():

@@ -5,11 +5,13 @@ class Dog(db.Model):
     name = db.Column(db.String)
     breed = db.Column(db.String)
     age = db.Column(db.String)
+    chip = db.Column(db.String, default='')
 
     def to_dict(self):
         return {
                 "id": self.id,
                 "name": self.name,
                 "breed": self.breed,
-                "age": self.age
+                "age": self.age,
+                "chip": self.chip,
             }
