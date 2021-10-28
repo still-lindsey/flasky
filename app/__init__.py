@@ -3,22 +3,26 @@ from flask import Flask
 # Import & Initialize SQL Alchemy
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from dotenv import load_dotenv
+import os
 
 # Initialize SQL Alchemy
 db = SQLAlchemy()
 migrate = Migrate()
+load_dotenv()
 
-DATABASE_CONNECTION_STRING = \
-    'postgresql+psycopg2://postgres:postgres@localhost:5432/flasky_development'
 
-def create_app():
+def create_app(test_config = None):
     # __name__ store the name of the module we're in
     app = Flask(__name__)
-
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     # Step 2:
     # Configure SQLAlchemy
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_CONNECTION_STRING
+    if not test_config:
+        app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_CONNECTION_STRING")
+    else:
+        app.config["TESTING"] = True
+        app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("TEST_DATABASE_CONNECTION_STRING")
 
     # Import Models here!
     from app.models.dog import Dog
