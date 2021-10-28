@@ -1,4 +1,5 @@
 from app.models.dog import Dog
+from app import db
 import copy
 
 def test_get_all_dogs_returns_empty_list_when_db_is_empty(client):
@@ -24,9 +25,11 @@ def test_make_formal_dog_name(client, one_dog):
     response_body = response.get_json()
 
     #assert
+    dog = Dog.query.get(1)
     assert response.status_code == 200
     assert response_body == "Why hello, Mx. joy!"
 
+    db.session.expire(dog)
     updated_dog = Dog.query.get(1)
     assert updated_dog.name == "Mx. joy"
 
