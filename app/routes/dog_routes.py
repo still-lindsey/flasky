@@ -17,6 +17,16 @@ def get_dog_from_id(dog_id):
     return Dog.query.get_or_404(dog_id, description="{dog not found}")
 
 # Routes
+@dog_bp.route("/<dog_id>/formalize", methods=["PATCH"])
+def formalize_dog(dog_id):
+    dog = get_dog_from_id(dog_id)
+    dog.name = f"Mx. {dog.name}"
+
+    db.session.commit()
+
+    return jsonify(f"Why hello, {dog.name}!")
+
+
 @dog_bp.route("", methods=["GET"])
 def read_all_dogs():
 
@@ -70,7 +80,7 @@ def create_dogs():
     db.session.add(new_dog)
     db.session.commit()
 
-    return make_response(f"Dog {new_dog.name} created!", 201)
+    return make_response(new_dog.to_dict(), 201)
 
 
 @dog_bp.route("/<dog_id>", methods=["GET"])

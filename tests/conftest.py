@@ -1,5 +1,5 @@
 import pytest
-
+from app.models.dog import Dog
 from app import create_app, db
 
 #app
@@ -20,3 +20,12 @@ def client(app):
     return app.test_client()
 
 #data
+@pytest.fixture
+def one_dog(app):
+    dog = Dog(
+        name="joy",
+        breed="husky",
+        age="10"
+        )
+    db.session.add(dog)
+    db.session.commit()
