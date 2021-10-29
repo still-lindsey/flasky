@@ -1,11 +1,16 @@
 import pytest
 from app.models.dog import Dog
 from app import create_app, db
+from flask.signals import request_finished
 
 #app
 @pytest.fixture
 def app():
-    app = create_app({"Testing": True})
+    app = create_app({"TESTING": True})
+
+    @request_finished.connect_via(app)
+    def expire_session(sender, response, **extra):
+        db.session.remove()
 
     with app.app_context():
         db.create_all()
