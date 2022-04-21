@@ -7,21 +7,14 @@ class Dog:
         self.id = id
         self.name = name
         self.breed = breed
-        if not tricks:
-            self.tricks = []
-        self.tricks = tricks
+        self.tricks = tricks or []
 
     def to_json(self):
-        if not self.tricks:
-            tricks = []
-        else:
-            tricks = self.tricks
-
         return {
                 "id": self.id,
                 "name": self.name,
                 "breed": self.breed,
-                "tricks": tricks
+                "tricks": self.tricks
             }
 
 dogs = [
