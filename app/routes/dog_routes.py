@@ -8,7 +8,7 @@ class Dog:
         self.name = name
         self.breed = breed
         if not tricks:
-            tricks = []
+            self.tricks = []
         self.tricks = tricks
 
     def to_json(self):
