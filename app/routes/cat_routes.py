@@ -1,5 +1,7 @@
 from flask import Blueprint, jsonify, make_response, abort, request
 
+from .helpers import validate_cat
+
 from app.models.cat import Cat
 
 from app import db
@@ -33,28 +35,7 @@ cat_bp = Blueprint("cat", __name__,url_prefix="/cats")
 #     Cat(3, "George", "tabby","Sassy", 11)
 # ]
 
-def validate_cat(id):
-    try:
-        id = int(id)
-    except:
-        return abort(make_response({"message": f"cat {id} is invalid"}, 400))
-    
-    cat = Cat.query.get(id)
 
-    if not cat:
-        return abort(make_response({"message": f"cat {id} not found"}, 404))
-
-    # for cat in cats:
-    #     cats_response.append(
-    #         {"id": cat.id,
-    #         "name": cat.name,
-    #         "breed": cat.breed,
-    #         "personality": cat.personality,
-    #         "age": cat.age,
-    #         "toe_beans": cat.toe_beans}
-    #     )
-
-    return cat
 
 
 @cat_bp.route("", methods = ["POST"])
