@@ -19,7 +19,7 @@ class Cat(db.Model):
 	def to_json(self):
 		try:
 			caretaker = self.caretaker.name
-		except çAttributeError:
+		except AttributeError:
 			caretaker = "Imma street cat"
 		return {"id": self.id, "name": self.name,
         "personality": self.personality,
