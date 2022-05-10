@@ -42,10 +42,12 @@ cat_bp = Blueprint("cat", __name__,url_prefix="/cats")
 def create_cat():
     request_body = request.get_json()
 
-    new_cat = Cat(name=request_body["name"], 
-    breed = request_body["breed"],
-    personality=request_body["personality"], 
-    age=request_body["age"], toe_beans = request_body["toe_beans"])
+    # new_cat = Cat(name=request_body["name"], 
+    # breed = request_body["breed"],
+    # personality=request_body["personality"], 
+    # age=request_body["age"], toe_beans = request_body["toe_beans"])
+
+    new_cat = Cat.create(request_body)
 
     db.session.add(new_cat)
     db.session.commit()
@@ -105,11 +107,12 @@ def update_cat(cat_id):
 
     request_body = request.get_json()
 
-    cat.name = request_body["name"]
-    cat.age = request_body["age"]
-    cat.breed = request_body["breed"]
-    cat.personality = request_body["personality"]
-    cat.toe_beans = request_body["toe_beans"]
+    cat.update(request_body)
+    # cat.name = request_body["name"]
+    # cat.age = request_body["age"]
+    # cat.breed = request_body["breed"]
+    # cat.personality = request_body["personality"]
+    # cat.toe_beans = request_body["toe_beans"]
 
     db.session.commit()
 
