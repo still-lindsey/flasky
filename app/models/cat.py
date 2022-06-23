@@ -10,8 +10,6 @@ class Cat(db.Model):
 	personality = db.Column(db.String)
 
 	age = db.Column(db.Integer)
-	
-	toe_beans = db.Column(db.Integer, default = 16)
 
 	caretaker_id = db.Column(db.Integer, db.ForeignKey('caretaker.id'))
 	caretaker = db.relationship("Caretaker", back_populates = "cats")
@@ -25,7 +23,6 @@ class Cat(db.Model):
         "personality": self.personality,
         "breed": self.breed,
 		"age": self.age,
-        "toe_beans": self.toe_beans,
 		"caretaker": caretaker}
 
 	def update(self, request_body):
@@ -33,13 +30,13 @@ class Cat(db.Model):
 		self.age = request_body["age"]
 		self.breed = request_body["breed"]
 		self.personality = request_body["personality"]
-		self.toe_beans = request_body["toe_beans"]
+
 
 	@classmethod
 	def create(cls, request_body):
 		new_cat = cls(name=request_body["name"],
             breed=request_body["breed"],
             personality=request_body["personality"],
-            age=request_body["age"], toe_beans=request_body["toe_beans"])
+            age=int(request_body["age"]))
 			
 		return new_cat

@@ -52,7 +52,7 @@ def create_cat():
     db.session.add(new_cat)
     db.session.commit()
 
-    return make_response(f"Cat {new_cat.name} has been successfully created", 201)
+    return make_response({"data": {"message":f"Cat {new_cat.name} has been successfully created", "id": new_cat.id}}, 201)
 
 
 # get all cats
